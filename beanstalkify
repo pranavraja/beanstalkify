@@ -30,9 +30,6 @@ if required_params != (options.keys & required_params)
 end
 
 Beanstalk.configure! options[:credentials]
-app = Application.new(options[:stack])
-if options[:config]
-    app.configure!(options[:config])
-end
+app = Application.new(options[:stack], options[:config] || [])
 app.deploy!(options[:archive], options[:environment])
 

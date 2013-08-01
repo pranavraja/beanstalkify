@@ -4,17 +4,11 @@ require './deploy'
 class Application
     attr_accessor :stack, :config
 
-    def initialize(stack)
-        @stack = stack
-        @config = []
-    end
-
     # config is an array of hashes:
     #   :namespace, :option_name, :value
-    def configure!(config)
-        # Convert string keys to symbols
-        config = config.map { |c| Hash[c.map { |k, v| [k.to_sym,v]}] }
-        @config = config
+    def initialize(stack, config)
+        @stack = stack
+        @config = config.map { |c| Hash[c.map { |k, v| [k.to_sym,v]}] }
     end
 
     # Deploy an archive to an environment. 
