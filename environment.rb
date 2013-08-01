@@ -47,9 +47,10 @@ class Environment
         e ? e[:endpoint_url] : ""
     end
 
-    def wait!
-        while self.status == "Launching"
-            puts "#{self.name} is launching..."
+    # Wait for the status to change from `old_status` to something else
+    def wait!(old_status)
+        while self.status == old_status
+            puts "#{self.name} is #{old_status}..."
             sleep 20
         end
     end

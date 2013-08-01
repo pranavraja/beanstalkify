@@ -34,11 +34,12 @@ class Application
         if env.status.empty?
             puts "Creating stack '#{@stack}' for #{deployment.application.name}-#{deployment.application.version}..."
             env.create!(deployment.application, @stack, @config)
+            env.wait!("Launching")
         else
             puts "Deploying #{deployment.application.version} to #{environment_name}..."
             env.deploy!(deployment.application, @config)
+            env.wait!("Updating")
         end
-        env.wait!
         puts "Done. Visit http://#{env.url} in your browser."
     end
 end
