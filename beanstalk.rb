@@ -1,6 +1,7 @@
 require 'aws-sdk'
 
 class Beanstalk
+    @@config = {}
     def self.configure!(config={})
         # Convert string keys to symbols
         @@config = Hash[config.map{|(k,v)| [k.to_sym,v]}]
