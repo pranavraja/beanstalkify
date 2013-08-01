@@ -27,7 +27,7 @@ Should do the following
 - Ensure that a beanstalk application called 'app' exists, and add a version called 'version', linked to the archive in that s3 bucket
 - Ensure that the environment `env` exists (with optional settings overrides in `config.yml`), running the specified stack
 - Deploy the provided version of the application into `env`
-- Report progress. When complete report the URL where the app can be hit.
+- Report progress. When complete report the URL where the app can be hit (note: this will be the URL of the ELB).
 
 # Running the somewhat useless tests
     
