@@ -11,7 +11,7 @@ class Environment
     # Assuming the provided app has already been uploaded,
     # update this environment to the app's version
     # Optionally pass in a bunch of settings to override
-    def deploy!(app, settings={})
+    def deploy!(app, settings=[])
         @beanstalk.update_environment({
             :version_label => app.version,
             :environment_name => self.name,
@@ -21,7 +21,7 @@ class Environment
 
     # Assuming the app has already been uploaded, 
     # create a new environment with the app deployed onto the provided stack.
-    def create!(app, stack, settings={})
+    def create!(app, stack, settings=[])
         @beanstalk.create_environment({
             :application_name => app.name,
             :version_label => app.version,

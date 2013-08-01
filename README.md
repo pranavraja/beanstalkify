@@ -18,14 +18,14 @@ Create a file called `credentials.yml`, with the following format:
 
 # Running
 
-    beanstalkify -k credentials.yml -a app-version.zip -s "64bit Amazon Linux running Node.js" -e env
+    beanstalkify -k credentials.yml -a app-version.zip -s "64bit Amazon Linux running Node.js" -e env [-c config.yml]
 
 Should do the following
 
 - Connect to aws using the credentials in `credentials.yml`
 - Publish `app-version.zip` to s3
 - Ensure that a beanstalk application called 'app' exists, and add a version called 'version', linked to the archive in that s3 bucket
-- Ensure that the environment `env` exists, running the specified stack
+- Ensure that the environment `env` exists (with optional settings overrides in `config.yml`), running the specified stack
 - Deploy the provided version of the application into `env`
 - Report progress. When complete report the URL where the app can be hit.
 
@@ -36,6 +36,5 @@ Should do the following
 # TODO
 
 - Tests around error handling
-- Allow setting overrides through a `config.yml` or similar file.
 - Provide some blue-green deployment integrated with health checks, using the `swap_environment_cnames` feature of the AWS SDK.
 

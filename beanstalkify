@@ -18,15 +18,21 @@ OptionParser.new do |opts|
     opts.on("-s", "--stack [stack]", "Stack to provision (e.g. '64bit Amazon Linux running Node.js')") do |v|
         options[:stack] = v
     end
+    opts.on("-c", "--config [file]", "Configuration overrides for the environment") do |v|
+        options[:config] = YAML.load_file(v)
+    end
 end.parse!
 
 required_params = [:credentials, :archive, :environment, :stack]
 if required_params != (options.keys & required_params)
-    puts "Example usage: beanstalkify.rb -k credentials.yml -a AppName-version.zip -e AppName-test -s '64bit Amazon Linux running Node.js'"
+    puts "Example usage: beanstalkify.rb -k credentials.yml -a AppName-version.zip -e AppName-test -s '64bit Amazon Linux running Node.js' -c config.yml"
     exit
 end
 
 Beanstalk.configure! options[:credentials]
 app = Application.new(options[:stack])
+if options[:config]
+    app.configure!(options[:config])
+end
 app.deploy!(options[:archive], options[:environment])
 

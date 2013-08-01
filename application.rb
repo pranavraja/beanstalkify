@@ -6,17 +6,14 @@ class Application
 
     def initialize(stack)
         @stack = stack
-        @config = {}
+        @config = []
     end
 
     # config is an array of hashes:
     #   :namespace, :option_name, :value
     def configure!(config)
-        errors = @beanstalk.validate_configuration_settings(config).data[:messages]
-        if errors.count
-            puts JSON.pretty_generate(errors)
-            return
-        end
+        # Convert string keys to symbols
+        config = config.map { |c| Hash[c.map { |k, v| [k.to_sym,v]}] }
         @config = config
     end
 
