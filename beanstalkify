@@ -1,0 +1,32 @@
+#!/usr/bin/env ruby
+require 'optparse'
+require 'yaml'
+require './beanstalk'
+require './application'
+
+options = {}
+OptionParser.new do |opts|
+    opts.on("-k", "--keyfile [file]", "Load credentials from yaml file") do |v|
+        options[:credentials] = YAML.load_file(v)
+    end
+    opts.on("-a", "--archive [file]", "Archive to deploy (e.g. AppName-version.zip)") do |v|
+        options[:archive] = v
+    end
+    opts.on("-e", "--environment [env]", "Environment to provision (e.g. AppName-test)") do |v|
+        options[:environment] = v
+    end
+    opts.on("-s", "--stack [stack]", "Stack to provision (e.g. '64bit Amazon Linux running Node.js')") do |v|
+        options[:stack] = v
+    end
+end.parse!
+
+required_params = [:credentials, :archive, :environment, :stack]
+if required_params != (options.keys & required_params)
+    puts "Example usage: beanstalkify.rb -k credentials.yml -a AppName-version.zip -e AppName-test -s '64bit Amazon Linux running Node.js'"
+    exit
+end
+
+Beanstalk.configure! options[:credentials]
+app = Application.new(options[:stack])
+app.deploy!(options[:archive], options[:environment])
+
