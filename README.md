@@ -12,8 +12,8 @@
 
 Create a file called `credentials.yml`, with the following format:
 
-    access_key_id: youraccesskey
-    secret_access_key: yoursecretkey
+    access_key_id: A98KJHBLABLABLA
+    secret_access_key: dkuU90kmySuperSecretKey
     region: us-east-1
 
 # Running
@@ -25,9 +25,28 @@ Should do the following
 - Connect to aws using the credentials in `credentials.yml`
 - Publish `app-version.zip` to s3
 - Ensure that a beanstalk application called 'app' exists, and add a version called 'version', linked to the archive in that s3 bucket
-- Ensure that the environment `env` exists (with optional settings overrides in `config.yml`), running the specified stack
+- Ensure that the environment `env` exists (with optional settings overrides in `config.yml` - see below), running the specified stack.
 - Deploy the provided version of the application into `env`
 - Report progress. When complete report the URL where the app can be hit (note: this will be the URL of the ELB).
+
+# Settings overrides
+
+An example `config.yml`:
+
+```yaml
+-
+    namespace: 'aws:autoscaling:asg'
+    option_name: Availability Zones
+    value: Any 2
+-
+    namespace: 'aws:autoscaling:launchconfiguration'
+    option_name: InstanceType
+    value: m1.small
+-
+    namespace: 'aws:autoscaling:launchconfiguration'
+    option_name: EC2KeyName
+    value: MyAwesomeEC2-dev
+```
 
 # Running the somewhat useless tests
     
