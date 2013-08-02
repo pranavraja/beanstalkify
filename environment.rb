@@ -50,7 +50,7 @@ class Environment
     # Wait for the status to change from `old_status` to something else
     def wait!(old_status)
         while self.status == old_status
-            puts "#{self.name} is #{old_status}..."
+            puts "#{self.name} is still #{old_status}..."
             sleep 20
         end
     end
