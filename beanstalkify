@@ -24,7 +24,7 @@ OptionParser.new do |opts|
 end.parse!
 
 required_params = [:credentials, :archive, :environment, :stack]
-if required_params != (options.keys & required_params)
+unless (required_params - options.keys).empty?
     puts "Example usage: beanstalkify.rb -k credentials.yml -a AppName-version.zip -e AppName-test -s '64bit Amazon Linux running Node.js' -c config.yml"
     exit
 end
