@@ -33,7 +33,8 @@ class Environment
 
     def status
         envs = @beanstalk.describe_environments({
-            :environment_names => [self.name]
+            :environment_names => [self.name],
+            :include_deleted => false
         }).data[:environments]
         e = envs.first
         e ? e[:status] : ""
