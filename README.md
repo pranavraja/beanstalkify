@@ -14,7 +14,7 @@ Create a file called `credentials.yml`, with the following format:
 
     access_key_id: youraccesskey
     secret_access_key: yoursecretkey
-    region: yourregion
+    region: us-east-1
 
 # Running
 
