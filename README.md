@@ -4,11 +4,10 @@
 # Prerequisites
 
 - Ruby 1.9
-- bundler
 
-# Setup
+# Installation
 
-    bundle install
+    gem install beanstalkify
 
 Create a file called `credentials.yml`, with the following format:
 

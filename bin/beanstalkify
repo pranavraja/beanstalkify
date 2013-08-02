@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 require 'optparse'
 require 'yaml'
-require './beanstalk'
-require './application'
+require 'beanstalkify/beanstalk'
+require 'beanstalkify/application'
 
 options = {}
 OptionParser.new do |opts|
@@ -25,11 +25,11 @@ end.parse!
 
 required_params = [:credentials, :archive, :environment, :stack]
 unless (required_params - options.keys).empty?
-    puts "Example usage: beanstalkify.rb -k credentials.yml -a AppName-version.zip -e AppName-test -s '64bit Amazon Linux running Node.js' -c config.yml"
+    puts "Example usage: beanstalkify -k credentials.yml -a AppName-version.zip -e AppName-test -s '64bit Amazon Linux running Node.js' -c config.yml"
     exit
 end
 
-Beanstalk.configure! options[:credentials]
-app = Application.new(options[:stack], options[:config] || [])
+Beanstalkify::Beanstalk.configure! options[:credentials]
+app = Beanstalkify::Application.new(options[:stack], options[:config] || [])
 app.deploy!(options[:archive], options[:environment])
 
