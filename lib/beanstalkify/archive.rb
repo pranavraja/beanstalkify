@@ -8,7 +8,8 @@ module Beanstalkify
         end
 
         def name
-            filename.split('-')[0]
+            f = filename
+            f[0..f.rindex('-')-1]
         end
 
         def version
