@@ -1,6 +1,3 @@
-require 'beanstalkify/environment'
-require 'beanstalkify/deploy'
-
 module Beanstalkify
     class Application
         attr_accessor :stack, :config

@@ -1,8 +1,7 @@
 #!/usr/bin/env ruby
 require 'optparse'
 require 'yaml'
-require 'beanstalkify/beanstalk'
-require 'beanstalkify/application'
+Dir.glob(File.join(File.dirname(__FILE__), "../lib/beanstalkify", "*.rb")).each { |f| require f }
 
 options = {}
 OptionParser.new do |opts|
