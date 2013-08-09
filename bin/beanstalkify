@@ -1,8 +1,7 @@
 #!/usr/bin/env ruby
 require 'optparse'
 require 'yaml'
-require 'beanstalkify/beanstalk'
-require 'beanstalkify/application'
+Dir.glob(File.join(File.dirname(__FILE__), "../lib/beanstalkify", "*.rb")).each { |f| require f }
 
 options = {}
 OptionParser.new do |opts|
@@ -18,18 +17,27 @@ OptionParser.new do |opts|
     opts.on("-s", "--stack [stack]", "Stack to provision (e.g. '64bit Amazon Linux running Node.js')") do |v|
         options[:stack] = v
     end
-    opts.on("-c", "--config [file]", "Configuration overrides for the environment") do |v|
+    opts.on("-c", "--config [file]", "Configuration overrides for the environment (optional)") do |v|
         options[:config] = YAML.load_file(v)
     end
+    opts.on("-o", "--outfile [file]", "File to write YAML environment details for future scripting (optional)") do |v|
+        options[:outfile] = v
+    end    
 end.parse!
 
 required_params = [:credentials, :archive, :environment, :stack]
 unless (required_params - options.keys).empty?
-    puts "Example usage: beanstalkify -k credentials.yml -a AppName-version.zip -e AppName-test -s '64bit Amazon Linux running Node.js' -c config.yml"
+    puts "Example usage: beanstalkify -k credentials.yml -a AppName-version.zip -e AppName-test -s '64bit Amazon Linux running Node.js' [-c config.yml] [-o info.yml]"
     exit
 end
 
 Beanstalkify::Beanstalk.configure! options[:credentials]
+
 app = Beanstalkify::Application.new(options[:stack], options[:config] || [])
-app.deploy!(options[:archive], options[:environment])
+deployment = Beanstalkify::Deploy.new(options[:archive])
+environment = Beanstalkify::Environment.new(options[:environment])
+
+deployment_info = app.deploy! deployment, environment
+
+File.open(options[:outfile], 'w') { |f| f.puts deployment_info.to_yaml } if options[:outfile]
 
