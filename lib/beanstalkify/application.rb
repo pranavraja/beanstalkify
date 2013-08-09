@@ -11,9 +11,7 @@ module Beanstalkify
 
         # Deploy an archive to an environment. 
         # If the environment doesn't exist, it will be created.
-        def deploy!(archive, environment_name)
-            deployment = Deploy.new(archive)
-            env = Environment.new(environment_name)
+        def deploy!(deployment, env)
             if deployment.deployed?
                 puts "#{deployment.archive.version} is already uploaded."
             else
@@ -30,6 +28,7 @@ module Beanstalkify
                 env.wait!("Updating")
             end
             puts "Done. Visit http://#{env.url} in your browser."
+            DeploymentInfo.new env, deployment.archive
         end
     end
 end
