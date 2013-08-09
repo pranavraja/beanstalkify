@@ -18,18 +18,18 @@ module Beanstalkify
             deployment = Deploy.new(archive)
             env = Environment.new(environment_name)
             if deployment.deployed?
-                puts "#{deployment.application.version} is already uploaded."
+                puts "#{deployment.archive.version} is already uploaded."
             else
                 deployment.upload!
                 deployment.wait!
             end
             if env.status.empty?
-                puts "Creating stack '#{@stack}' for #{deployment.application.name}-#{deployment.application.version}..."
-                env.create!(deployment.application, @stack, @config)
+                puts "Creating stack '#{@stack}' for #{deployment.archive.name}-#{deployment.archive.version}..."
+                env.create!(deployment.archive, @stack, @config)
                 env.wait!("Launching")
             else
-                puts "Deploying #{deployment.application.version} to #{environment_name}..."
-                env.deploy!(deployment.application, @config)
+                puts "Deploying #{deployment.archive.version} to #{env.name}..."
+                env.deploy!(deployment.archive, @config)
                 env.wait!("Updating")
             end
             puts "Done. Visit http://#{env.url} in your browser."
