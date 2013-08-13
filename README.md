@@ -24,8 +24,8 @@ Should do the following
 - Connect to aws using the credentials in `credentials.yml`
 - Publish `app-version.zip` to s3
 - Ensure that a beanstalk application called 'app' exists, and add a version called 'version', linked to the archive in that s3 bucket
-- Ensure that the environment `env` exists (with optional settings overrides in `config.yml` - see below), running the specified stack.
-- Deploy the provided version of the application into `env`
+- Ensure that the environment `app-env` exists (with optional settings overrides in `config.yml` - see below), running the specified stack.
+- Deploy the provided version of the application into `app-env`
 - Report progress. When complete report the URL where the app can be hit (note: this will be the URL of the ELB).
 
 # Settings overrides

@@ -27,15 +27,16 @@ end.parse!
 
 required_params = [:credentials, :archive, :environment, :stack]
 unless (required_params - options.keys).empty?
-    puts "Example usage: beanstalkify -k credentials.yml -a AppName-version.zip -e AppName-test -s '64bit Amazon Linux running Node.js' [-c config.yml] [-o info.yml]"
+    puts "Example usage: beanstalkify -k credentials.yml -a AppName-version.zip -e Test -s '64bit Amazon Linux running Node.js' [-c config.yml] [-o info.yml]"
     exit
 end
 
 Beanstalkify::Beanstalk.configure! options[:credentials]
 
 app = Beanstalkify::Application.new(options[:stack], options[:config] || [])
-deployment = Beanstalkify::Deploy.new(options[:archive])
-environment = Beanstalkify::Environment.new(options[:environment])
+archive = Beanstalkify::Archive.new(options[:archive])
+deployment = Beanstalkify::Deploy.new(archive)
+environment = Beanstalkify::Environment.new(archive, options[:environment])
 
 deployment_info = app.deploy! deployment, environment
 
