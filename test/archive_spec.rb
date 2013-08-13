@@ -1,4 +1,3 @@
-
 require './lib/beanstalkify/archive'
 
 describe Beanstalkify::Archive do

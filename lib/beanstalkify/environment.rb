@@ -4,8 +4,8 @@ module Beanstalkify
     class Environment
         attr_accessor :name
 
-        def initialize(name)
-            @name = name
+        def initialize(archive, name)
+            @name = [archive.name, name].join("-")
             @beanstalk = Beanstalk.api
         end
 

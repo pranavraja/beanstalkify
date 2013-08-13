@@ -6,8 +6,8 @@ module Beanstalkify
     class Deploy
         attr_accessor :beanstalk, :archive
 
-        def initialize(path)
-            @archive = Archive.new(path)
+        def initialize(archive)
+            @archive = archive
             @beanstalk = Beanstalk.api
         end
 
