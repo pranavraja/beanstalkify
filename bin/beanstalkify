@@ -35,10 +35,9 @@ Beanstalkify::Beanstalk.configure! options[:credentials]
 
 app = Beanstalkify::Application.new(options[:stack], options[:config] || [])
 archive = Beanstalkify::Archive.new(options[:archive])
-deployment = Beanstalkify::Deploy.new(archive)
 environment = Beanstalkify::Environment.new(archive, options[:environment])
 
-deployment_info = app.deploy! deployment, environment
+deployment_info = app.deploy! archive, environment
 
 File.open(options[:outfile], 'w') { |f| f.puts deployment_info.to_yaml } if options[:outfile]
 

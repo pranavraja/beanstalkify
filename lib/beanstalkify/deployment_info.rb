@@ -6,7 +6,7 @@ module Beanstalkify
     
     def to_yaml
       {
-        'app_name'    => @archive.name,
+        'app_name'    => @archive.app_name,
         'app_version' => @archive.version,
         'env_name'    => @environment.name,
         'env_url'     => @environment.url

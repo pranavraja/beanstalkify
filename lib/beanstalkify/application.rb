@@ -11,24 +11,20 @@ module Beanstalkify
 
         # Deploy an archive to an environment. 
         # If the environment doesn't exist, it will be created.
-        def deploy!(deployment, env)
-            if deployment.deployed?
-                puts "#{deployment.archive.version} is already uploaded."
-            else
-                deployment.upload!
-                deployment.wait!
-            end
+        def deploy!(archive, env)
+            archive.upload(Beanstalk.api)
+            
             if env.status.empty?
-                puts "Creating stack '#{@stack}' for #{deployment.archive.name}-#{deployment.archive.version}..."
-                env.create!(deployment.archive, @stack, @config)
+                puts "Creating stack '#{@stack}' for #{archive.app_name}-#{archive.version}..."
+                env.create!(archive, @stack, @config)
                 env.wait!("Launching")
             else
-                puts "Deploying #{deployment.archive.version} to #{env.name}..."
-                env.deploy!(deployment.archive, @config)
+                puts "Deploying #{archive.version} to #{env.name}..."
+                env.deploy!(archive, @config)
                 env.wait!("Updating")
             end
             puts "Done. Visit http://#{env.url} in your browser."
-            DeploymentInfo.new env, deployment.archive
+            DeploymentInfo.new env, archive
         end
     end
 end

@@ -5,7 +5,7 @@ module Beanstalkify
         attr_accessor :name
 
         def initialize(archive, name)
-            @name = [archive.name, name].join("-")
+            @name = [archive.app_name, name].join("-")
             @beanstalk = Beanstalk.api
         end
 
@@ -20,12 +20,12 @@ module Beanstalkify
             })
         end
 
-        # Assuming the app has already been uploaded, 
+        # Assuming the archive has already been uploaded, 
         # create a new environment with the app deployed onto the provided stack.
-        def create!(app, stack, settings=[])
+        def create!(archive, stack, settings=[])
             @beanstalk.create_environment({
-                :application_name => app.name,
-                :version_label => app.version,
+                :application_name => archive.app_name,
+                :version_label => archive.version,
                 :environment_name => self.name,
                 :solution_stack_name => stack,
                 :option_settings => settings
@@ -51,10 +51,12 @@ module Beanstalkify
 
         # Wait for the status to change from `old_status` to something else
         def wait!(old_status)
+            puts "Waiting for #{self.name} to finish #{old_status.downcase}..."
             while self.status == old_status
-                puts "#{self.name} is still #{old_status}..."
-                sleep 20
+                print '.'              
+                sleep 5
             end
+            puts
         end
     end
 end
