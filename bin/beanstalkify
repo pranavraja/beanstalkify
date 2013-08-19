@@ -3,6 +3,9 @@ require 'optparse'
 require 'yaml'
 Dir.glob(File.join(File.dirname(__FILE__), "../lib/beanstalkify", "*.rb")).each { |f| require f }
 
+# Flush all logging immediately so that scripts invoking beanstalkify can choose to merge the info.
+$stdout.sync = true
+
 options = {}
 OptionParser.new do |opts|
     opts.on("-k", "--keyfile [file]", "Load credentials from yaml file") do |v|
