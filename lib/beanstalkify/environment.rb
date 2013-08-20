@@ -39,7 +39,7 @@ module Beanstalkify
 
         def url
             e = describe_environment
-            e ? e[:endpoint_url] : ""
+            e ? e[:cname] : ""
         end
         
         def healthy?

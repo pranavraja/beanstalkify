@@ -17,9 +17,9 @@ describe Beanstalkify::Environment do
     @env.status.should == 'Uncertain'
   end
   
-  it 'exposes the Beanstalk ELB URL' do
-    when_beanstalk_describe_environments_returns(endpoint_url: 'http://elb.longurl.com')
-    @env.url.should == 'http://elb.longurl.com'
+  it 'exposes the Beanstalk CNAME URL' do
+    when_beanstalk_describe_environments_returns(cname: 'http://cname.elasticbeanstalk.com')
+    @env.url.should == 'http://cname.elasticbeanstalk.com'
   end
   
   it 'is healthy when Beanstalk reports that it is green' do
