@@ -44,3 +44,4 @@ deployment_info = app.deploy! archive, environment
 
 File.open(options[:outfile], 'w') { |f| f.puts deployment_info.to_yaml } if options[:outfile]
 
+raise("Deployed environment is not healthy") unless environment.healthy?

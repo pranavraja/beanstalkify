@@ -33,20 +33,18 @@ module Beanstalkify
         end
 
         def status
-            envs = @beanstalk.describe_environments({
-                :environment_names => [self.name],
-                :include_deleted => false
-            }).data[:environments]
-            e = envs.first
+            e = describe_environment
             e ? e[:status] : ""
         end
 
         def url
-            envs = @beanstalk.describe_environments({
-                :environment_names => [self.name]
-            }).data[:environments]
-            e = envs.first
+            e = describe_environment
             e ? e[:endpoint_url] : ""
+        end
+        
+        def healthy?
+           e = describe_environment
+           e ? e[:health] == 'Green' : false
         end
 
         # Wait for the status to change from `old_status` to something else
@@ -57,6 +55,15 @@ module Beanstalkify
                 sleep 5
             end
             puts
+        end
+        
+        private
+        
+        def describe_environment
+            @beanstalk.describe_environments({
+                :environment_names => [name],
+                :include_deleted => false
+            }).data[:environments].first
         end
     end
 end
