@@ -20,6 +20,9 @@ OptionParser.new do |opts|
     opts.on("-s", "--stack [stack]", "Stack to provision (e.g. '64bit Amazon Linux running Node.js')") do |v|
         options[:stack] = v
     end
+    opts.on("-n", "--cname [cname]", "CNAME prefix (e.g. my-awesome-app)") do |v|
+        options[:cname] = v
+    end
     opts.on("-c", "--config [file]", "Configuration overrides for the environment (optional)") do |v|
         options[:config] = YAML.load_file(v)
     end
@@ -30,13 +33,13 @@ end.parse!
 
 required_params = [:credentials, :archive, :environment, :stack]
 unless (required_params - options.keys).empty?
-    puts "Example usage: beanstalkify -k credentials.yml -a AppName-version.zip -e Test -s '64bit Amazon Linux running Node.js' [-c config.yml] [-o info.yml]"
+    puts "Example usage: beanstalkify -k credentials.yml -a AppName-version.zip -e Test -s '64bit Amazon Linux running Node.js' [-c config.yml] [-n my-awesome-app] [-o info.yml]"
     exit
 end
 
 Beanstalkify::Beanstalk.configure! options[:credentials]
 
-app = Beanstalkify::Application.new(options[:stack], options[:config] || [])
+app = Beanstalkify::Application.new(options[:stack], options[:cname], options[:config] || [])
 archive = Beanstalkify::Archive.new(options[:archive])
 environment = Beanstalkify::Environment.new(archive, options[:environment])
 

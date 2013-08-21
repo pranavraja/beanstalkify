@@ -22,14 +22,28 @@ module Beanstalkify
 
         # Assuming the archive has already been uploaded, 
         # create a new environment with the app deployed onto the provided stack.
-        def create!(archive, stack, settings=[])
-            @beanstalk.create_environment({
+        def create!(archive, stack, cname, settings=[])
+            params = {
                 :application_name => archive.app_name,
                 :version_label => archive.version,
                 :environment_name => self.name,
                 :solution_stack_name => stack,
                 :option_settings => settings
-            })
+            }
+            if cname
+                if dns_available(cname)
+                    params[:cname_prefix] = cname
+                else
+                    puts "CNAME #{cname} is unavailable."
+                end
+            end
+            @beanstalk.create_environment(params)
+        end
+
+        def dns_available(cname)
+            @beanstalk.check_dns_availability({
+                :cname_prefix => cname
+            })[:available]
         end
 
         def status

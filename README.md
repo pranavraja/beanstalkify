@@ -17,7 +17,7 @@ Create a file called `credentials.yml`, with the following format:
 
 # Running
 
-    beanstalkify -k credentials.yml -a app-version.zip -s "64bit Amazon Linux running Node.js" -e env [-c config.yml]
+    beanstalkify -k credentials.yml -a app-version.zip -s "64bit Amazon Linux running Node.js" -e env [-n my-awesome-app] [-c config.yml]
 
 Should do the following
 
