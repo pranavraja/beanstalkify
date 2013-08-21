@@ -1,13 +1,13 @@
 PATH
   remote: .
   specs:
-    beanstalkify (0.0.5)
+    beanstalkify (0.0.6)
       aws-sdk
 
 GEM
   remote: http://rubygems.org/
   specs:
-    aws-sdk (1.14.1)
+    aws-sdk (1.15.0)
       json (~> 1.4)
       nokogiri (< 1.6.0)
       uuidtools (~> 2.1)

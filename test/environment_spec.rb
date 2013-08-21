@@ -17,7 +17,7 @@ describe Beanstalkify::Environment do
             :solution_stack_name => 'mastack',
             :option_settings => masettings
       ).and_return nil
-      @env.create! @archive, 'mastack', nil, masettings
+      @env.create! @archive, 'mastack', [], masettings
   end
 
   it 'creates a new environment with a cname, if available' do
@@ -27,13 +27,13 @@ describe Beanstalkify::Environment do
             :version_label => 'version',
             :environment_name => 'app-name-Test',
             :solution_stack_name => 'mastack',
-            :cname_prefix => 'ma-cname',
+            :cname_prefix => 'ma-cname-1',
             :option_settings => masettings
       ).and_return nil
       expect(@beanstalk_api).to receive(:check_dns_availability).and_return(
           :available => true
       )
-      @env.create! @archive, 'mastack', 'ma-cname', masettings
+      @env.create! @archive, 'mastack', ['ma-cname-1'], masettings
   end
 
   it 'creates an environment without the cname, if the cname was unavailable' do
@@ -48,7 +48,7 @@ describe Beanstalkify::Environment do
       expect(@beanstalk_api).to receive(:check_dns_availability).and_return(
           :available => false
       )
-      @env.create! @archive, 'mastack', 'ma-cname', masettings
+      @env.create! @archive, 'mastack', ['ma-cname-1'], masettings
   end
 
   it 'prepends the application name because environment names must be unique within an AWS account' do

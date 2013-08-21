@@ -4,9 +4,9 @@ module Beanstalkify
 
         # config is an array of hashes:
         #   :namespace, :option_name, :value
-        def initialize(stack, cname, config)
+        def initialize(stack, cnames, config)
             @stack = stack
-            @cname = cname
+            @cnames = cnames.split(',')
             @config = config.map { |c| Hash[c.map { |k, v| [k.to_sym,v]}] }
         end
 
@@ -17,7 +17,7 @@ module Beanstalkify
             
             if env.status.empty?
                 puts "Creating stack '#{@stack}' for #{archive.app_name}-#{archive.version}..."
-                env.create!(archive, @stack, @cname, @config)
+                env.create!(archive, @stack, @cnames, @config)
                 env.wait!("Launching")
             else
                 puts "Deploying #{archive.version} to #{env.name}..."
