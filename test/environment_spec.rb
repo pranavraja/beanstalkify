@@ -51,10 +51,38 @@ describe Beanstalkify::Environment do
     @env.should be_healthy
   end
   
-  it 'waits until the Beanstalk status changes' do
-    @env.stub :sleep
-    expect(@env).to receive(:status).exactly(3).times.and_return('Launching', 'Launching', 'Running')
-    @env.wait_until_status_is_not 'Launching'
+  describe 'waiting for a Beanstalk status change' do
+    before(:each) do
+      @env.stub :sleep  
+    end
+    
+    it 'waits for the value to be different' do
+      expect(@env).to receive(:status).exactly(3).times.and_return 'Launching', 'Launching', 'Running'
+      @env.wait_until_status_is_not 'Launching'
+    end
+  
+    it 'times out after a while but does not throw an error' do
+      attempts = (Beanstalkify::Environment::STATUS_CHANGE_TIMEOUT / Beanstalkify::Environment::POLL_INTERVAL) + 1
+      expect(@env).to receive(:status).exactly(attempts).times.and_return 'Unchanged'
+      @env.wait_until_status_is_not 'Unchanged'
+    end
+  end
+  
+  describe 'waiting until healthy' do
+    before(:each) do
+      @env.stub :sleep  
+    end
+    
+    it 'waits until health is green' do
+      expect(@env).to receive(:healthy?).exactly(3).times.and_return false, false, true
+      @env.wait_until_healthy
+    end
+    
+    it 'times out after a while but does not throw an error' do
+      attempts = (Beanstalkify::Environment::HEALTHY_TIMEOUT / Beanstalkify::Environment::POLL_INTERVAL) + 1
+      expect(@env).to receive(:healthy?).exactly(attempts).times.and_return false
+      @env.wait_until_healthy
+    end
   end
   
   def when_beanstalk_describe_environments_returns(env_data)

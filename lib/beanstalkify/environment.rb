@@ -2,7 +2,11 @@ require 'beanstalkify/beanstalk'
 
 module Beanstalkify
   class Environment
-      attr_accessor :name
+    POLL_INTERVAL = 5
+    STATUS_CHANGE_TIMEOUT = 1200
+    HEALTHY_TIMEOUT = 120
+    
+    attr_accessor :name
 
     def initialize(archive, name)
       @name = [archive.app_name, name].join("-")
@@ -62,24 +66,33 @@ module Beanstalkify
       e = describe_environment
       e ? e[:status] : ""
     end
-
-    # Wait for the status to change from `old_status` to something else
+    
     def wait_until_status_is_not(old_status)
-      puts "Waiting for #{self.name} to finish #{old_status.downcase}..."
-      while self.status == old_status
-        print '.'              
-        sleep 5
-      end
-      puts
+      puts "Waiting for #{self.name} to finish #{old_status.downcase}..."      
+      wait_until -> { status != old_status }, STATUS_CHANGE_TIMEOUT
     end
-  
+    
+    def wait_until_healthy
+      puts "Waiting until #{self.name} is healthy..."
+      wait_until -> { healthy? }, HEALTHY_TIMEOUT
+    end
+    
     private
-  
+    
     def describe_environment
       @beanstalk.describe_environments({
         environment_names: [name],
         include_deleted: false
       }).data[:environments].first
+    end
+    
+    def wait_until(condition, timeout)
+      until condition.call or timeout <= 0
+        print '.'
+        sleep POLL_INTERVAL
+        timeout -= POLL_INTERVAL
+      end
+      puts
     end
   end
 end

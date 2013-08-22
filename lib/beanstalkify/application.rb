@@ -24,6 +24,8 @@ module Beanstalkify
                 env.deploy!(archive, @config)
                 env.wait_until_status_is_not "Updating"
             end
+            
+            env.wait_until_healthy
             puts "Done. Visit http://#{env.url} in your browser."
             DeploymentInfo.new env, archive
         end
