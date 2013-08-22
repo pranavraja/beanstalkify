@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    beanstalkify (0.0.6)
+    beanstalkify (0.0.7)
       aws-sdk
 
 GEM
