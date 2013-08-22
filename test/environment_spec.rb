@@ -6,49 +6,28 @@ describe Beanstalkify::Environment do
     allow(Beanstalkify::Beanstalk).to receive(:api).and_return @beanstalk_api = double
     @archive = Beanstalkify::Archive.new '/path/to/my/archive/app-name-version.zip'
     @env = Beanstalkify::Environment.new @archive, "Test"
+    @settings = {something: 'enabled'}
   end
+  
+  describe 'creation' do
+    it 'creates a new environment with params' do
+      expect_beanstalk_create_environment
+      @env.create! @archive, 'mastack', [], @settings
+    end
+  
+    context 'when a CNAME is specified' do
+      it 'creates a new environment with a cname, if available' do
+        when_beanstalk_cname_availability_is 'ma-cname-1', true
+        expect_beanstalk_create_environment(cname_prefix: 'ma-cname-1')
+        @env.create! @archive, 'mastack', ['ma-cname-1'], @settings
+      end
 
-  it 'creates a new environment with params' do
-      masettings = {}
-      expect(@beanstalk_api).to receive(:create_environment).with(
-            :application_name => 'app-name',
-            :version_label => 'version',
-            :environment_name => 'app-name-Test',
-            :solution_stack_name => 'mastack',
-            :option_settings => masettings
-      ).and_return nil
-      @env.create! @archive, 'mastack', [], masettings
-  end
-
-  it 'creates a new environment with a cname, if available' do
-      masettings = {}
-      expect(@beanstalk_api).to receive(:create_environment).with(
-            :application_name => 'app-name',
-            :version_label => 'version',
-            :environment_name => 'app-name-Test',
-            :solution_stack_name => 'mastack',
-            :cname_prefix => 'ma-cname-1',
-            :option_settings => masettings
-      ).and_return nil
-      expect(@beanstalk_api).to receive(:check_dns_availability).and_return(
-          :available => true
-      )
-      @env.create! @archive, 'mastack', ['ma-cname-1'], masettings
-  end
-
-  it 'creates an environment without the cname, if the cname was unavailable' do
-      masettings = {}
-      expect(@beanstalk_api).to receive(:create_environment).with(
-            :application_name => 'app-name',
-            :version_label => 'version',
-            :environment_name => 'app-name-Test',
-            :solution_stack_name => 'mastack',
-            :option_settings => masettings
-      ).and_return nil
-      expect(@beanstalk_api).to receive(:check_dns_availability).and_return(
-          :available => false
-      )
-      @env.create! @archive, 'mastack', ['ma-cname-1'], masettings
+      it 'creates an environment without the cname, if the cname was unavailable' do
+        when_beanstalk_cname_availability_is 'ma-cname-1', false
+        expect_beanstalk_create_environment
+        @env.create! @archive, 'mastack', ['ma-cname-1'], @settings
+      end
+    end
   end
 
   it 'prepends the application name because environment names must be unique within an AWS account' do
@@ -72,6 +51,12 @@ describe Beanstalkify::Environment do
     @env.should be_healthy
   end
   
+  it 'waits until the Beanstalk status changes' do
+    @env.stub :sleep
+    expect(@env).to receive(:status).exactly(3).times.and_return('Launching', 'Launching', 'Running')
+    @env.wait_until_status_is_not 'Launching'
+  end
+  
   def when_beanstalk_describe_environments_returns(env_data)
     expect(@beanstalk_api).to receive(:describe_environments).with(
       environment_names: ["app-name-Test"],
@@ -79,5 +64,20 @@ describe Beanstalkify::Environment do
     ).and_return double(
       data: {environments: [env_data]}
     )
+  end
+  
+  def expect_beanstalk_create_environment(additional_opts={})
+    opts = {
+      application_name: 'app-name',
+      version_label: 'version',
+      environment_name: 'app-name-Test',
+      solution_stack_name: 'mastack',
+      option_settings: @settings
+    }.merge additional_opts
+    expect(@beanstalk_api).to receive(:create_environment).with(opts).and_return nil
+  end
+  
+  def when_beanstalk_cname_availability_is(cname_prefix, available)
+    expect(@beanstalk_api).to receive(:check_dns_availability).with(cname_prefix: cname_prefix).and_return(available: available)
   end
 end

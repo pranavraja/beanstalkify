@@ -18,11 +18,11 @@ module Beanstalkify
             if env.status.empty?
                 puts "Creating stack '#{@stack}' for #{archive.app_name}-#{archive.version}..."
                 env.create!(archive, @stack, @cnames, @config)
-                env.wait!("Launching")
+                env.wait_until_status_is_not "Launching"
             else
                 puts "Deploying #{archive.version} to #{env.name}..."
                 env.deploy!(archive, @config)
-                env.wait!("Updating")
+                env.wait_until_status_is_not "Updating"
             end
             puts "Done. Visit http://#{env.url} in your browser."
             DeploymentInfo.new env, archive

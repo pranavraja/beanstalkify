@@ -64,7 +64,7 @@ module Beanstalkify
         end
 
         # Wait for the status to change from `old_status` to something else
-        def wait!(old_status)
+        def wait_until_status_is_not(old_status)
             puts "Waiting for #{self.name} to finish #{old_status.downcase}..."
             while self.status == old_status
                 print '.'              
